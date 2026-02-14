@@ -20,11 +20,10 @@ fi
 # Activate virtual environment
 source .venv/bin/activate
 
-# Upgrade pip first
-pip install --upgrade pip -q
-
 # Install backend dependencies if needed
 if ! python -c "import fastapi" 2>/dev/null; then
+    echo "Upgrading pip..."
+    python -m pip install --upgrade pip
     echo "Installing backend dependencies..."
     pip install -e ".[web]"
 fi
