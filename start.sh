@@ -33,17 +33,17 @@ if [ ! -d frontend/node_modules ]; then
 fi
 
 # Start backend in background
-echo "Starting backend on http://localhost:8000..."
-uvicorn web.main:app --reload &
+echo "Starting backend on http://localhost:8090..."
+python -m uvicorn web.main:app --host 0.0.0.0 --port 8090 --reload &
 BACKEND_PID=$!
 
 # Wait for backend to start
 sleep 3
 
 # Start frontend
-echo "Starting frontend on http://localhost:5173..."
+echo "Starting frontend on http://localhost:8091..."
 cd frontend
-npm run dev
+npm run dev -- --port 8091
 
 # Cleanup on exit
 trap "kill $BACKEND_PID" EXIT
