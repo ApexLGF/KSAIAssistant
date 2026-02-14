@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 8091,
-    allowedHosts: ['mymac.llamer.co'],
+    allowedHosts: ['mymac.llamer.co', 'ksai.llamer.co'],
     proxy: {
       '/api': {
         target: 'http://localhost:8090',
