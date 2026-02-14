@@ -1,0 +1,28 @@
+# TestAIAgent Configuration Example
+# Copy this file to config.yaml and fill in your API keys
+
+openai:
+  api_key: sk-your-openai-api-key-here
+  model: gpt-4o-mini
+  base_url: null  # Optional: for API proxy
+
+deepseek:
+  api_key: sk-your-deepseek-api-key-here
+  model: deepseek-chat
+  base_url: https://api.deepseek.com
+
+# MCP Servers (optional)
+mcp_servers:
+  - name: filesystem
+    transport: stdio
+    command: npx
+    args: ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
+
+  - name: "12306"
+    transport: stdio
+    command: npx
+    args: ["-y", "@modelcontextprotocol/server-12306"]
+
+skills_dir: ./skills
+history_file: ./data/history.json
+max_history_messages: 500
