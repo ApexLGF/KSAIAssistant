@@ -52,9 +52,9 @@ IMPORTANT: When responding to customers:
         """
         self.config = config
         self.llm = LLMClient(config.openai, config.deepseek)
-        self.registry = ToolRegistry()
         self.mcp_manager = MCPManager()
         self.skill_loader = SkillLoader(config.skills_dir)
+        self.registry = ToolRegistry(skill_loader=self.skill_loader)
         self.storage = HistoryStorage(config.history_file)
         self.context: Context | None = None
         self._initialized = False
