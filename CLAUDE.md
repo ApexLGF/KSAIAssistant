@@ -159,6 +159,52 @@ mcp_servers:
     args: ["-y", "@your/mcp-server"]
 ```
 
+## NotebookLM Skill 部署说明
+
+本项目集成了 [notebooklm-skill](https://github.com/PleasePrompto/notebooklm-skill) 作为 git submodule，用于通过浏览器自动化查询 Google NotebookLM 笔记本，获取基于文档的源引用回答。
+
+### 初始化安装
+
+```bash
+# 1. 克隆项目时自动拉取 submodule
+git clone --recurse-submodules https://github.com/ApexLGF/KSAIAssistant.git
+
+# 或已克隆的项目初始化 submodule
+git submodule update --init --recursive
+
+# 2. 复制预配置的笔记本库到 skill 数据目录
+mkdir -p skills/notebooklm-skill/data
+cp config/notebooklm-library.json skills/notebooklm-skill/data/library.json
+
+# 3. 首次运行会自动创建 .venv 并安装依赖，无需手动操作
+```
+
+### 默认笔记本
+
+默认配置的笔记本为 Everlasting Cabinetry 公司信息：
+- URL: `https://notebooklm.google.com/notebook/b11b42c9-5fc1-4423-8f01-8acef7172951`
+- 内容涵盖：产品规格、订单与退货、保修与免责、售后服务、隐私条款
+
+预配置文件位于 `config/notebooklm-library.json`，部署时复制到 `skills/notebooklm-skill/data/library.json`。
+
+### 认证设置（首次使用）
+
+```bash
+# 在 skill 目录下执行，会打开浏览器进行 Google 登录
+python3 skills/notebooklm-skill/scripts/run.py auth_manager.py setup
+```
+
+### 更新 submodule
+
+```bash
+# 拉取 notebooklm-skill 最新版本
+git submodule update --remote skills/notebooklm-skill
+
+# 提交更新的引用
+git add skills/notebooklm-skill
+git commit -m "Update notebooklm-skill to latest"
+```
+
 ## 常见问题
 
 - MCP 服务器必须已安装并可通过指定命令访问
