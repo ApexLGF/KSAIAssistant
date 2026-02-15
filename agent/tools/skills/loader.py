@@ -124,8 +124,7 @@ class SkillLoader:
             if skill.description:
                 parts.append(f"{skill.description}\n")
             if skill.working_dir:
-                parts.append(f"\n**Working Directory:** `{skill.working_dir}`\n")
-                parts.append("(Use this path as working_dir when running commands for this skill)\n")
+                parts.append(f"\n⚠️ REQUIRED: Every `run_command` call for this skill MUST include `\"working_dir\": \"{skill.working_dir}\"`. Commands will fail without it.\n")
 
             # Add dynamic state if available
             state = self._get_skill_state(skill)

@@ -82,8 +82,12 @@ class CommandTool(BaseTool):
 
         # Execute command
         try:
-            # Expand ~ in working_dir
-            cwd = os.path.expanduser(working_dir) if working_dir else None
+            # Resolve working_dir to absolute path
+            cwd = None
+            if working_dir:
+                cwd = os.path.expanduser(working_dir)
+                if not os.path.isabs(cwd):
+                    cwd = os.path.abspath(cwd)
 
             process = await asyncio.create_subprocess_shell(
                 command,
