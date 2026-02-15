@@ -93,6 +93,7 @@ class ToolRegistry:
                 # Inject if missing, or override if the provided path doesn't exist
                 if not provided or not os.path.isdir(provided):
                     arguments["working_dir"] = inferred
+                    print(f"[DEBUG] Auto-injected working_dir: {inferred}")
 
         return await tool.execute(**arguments)
 
