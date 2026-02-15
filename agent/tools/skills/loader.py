@@ -77,11 +77,22 @@ class SkillLoader:
         Returns:
             State string or None
         """
-        if not skill.working_dir:
-            return None
+        skill_dir = skill.working_dir or str(Path(skill.path).parent)
+        return self._get_skill_state_from_dir(skill_dir)
+
+    @staticmethod
+    def _get_skill_state_from_dir(skill_dir: str) -> str | None:
+        """Get dynamic state from a skill directory.
+
+        Args:
+            skill_dir: Absolute path to the skill directory
+
+        Returns:
+            State string or None
+        """
 
         # Check for data/library.json (notebooklm style)
-        library_path = Path(skill.working_dir) / "data" / "library.json"
+        library_path = Path(skill_dir) / "data" / "library.json"
         if library_path.exists():
             try:
                 data = json.loads(library_path.read_text(encoding="utf-8"))
@@ -124,8 +135,11 @@ class SkillLoader:
             parts.append(f"### {skill.name}\n")
             if skill.description:
                 parts.append(f"{skill.description}\n")
-            if skill.working_dir:
-                parts.append(f"\n**This skill is installed and ready at `{skill.working_dir}`.**\n")
+
+            # Resolve skill directory: use working_dir if set, otherwise derive from SKILL.md path
+            skill_dir = skill.working_dir or str(Path(skill.path).parent)
+
+            parts.append(f"\n**This skill is installed and ready at `{skill_dir}`.**\n")
 
             # Add dynamic state if available
             state = self._get_skill_state(skill)
@@ -134,9 +148,7 @@ class SkillLoader:
 
             # Rewrite relative script paths to absolute paths so commands
             # work regardless of working_dir
-            content = skill.content
-            if skill.working_dir:
-                content = self._rewrite_paths(content, skill.working_dir)
+            content = self._rewrite_paths(skill.content, skill_dir)
 
             parts.append(f"\n{content}\n")
 

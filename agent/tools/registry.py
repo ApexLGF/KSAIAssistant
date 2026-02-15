@@ -2,6 +2,7 @@
 
 import json
 import os
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from agent.tools.base import BaseTool
@@ -110,12 +111,14 @@ class ToolRegistry:
         Returns:
             Absolute working_dir path if a skill match is found, else None
         """
-        if not self._skill_loader:
+        if not self._skill_loader or "scripts/run.py" not in command:
             return None
         for skill in self._skill_loader.list_skills():
-            print(f"[DEBUG _infer] skill={skill.name}, working_dir={skill.working_dir}")
-            if skill.working_dir and "scripts/run.py" in command:
-                return skill.working_dir
+            # Use working_dir if set, otherwise derive from SKILL.md path
+            skill_dir = skill.working_dir or str(Path(skill.path).parent)
+            run_py = Path(skill_dir) / "scripts" / "run.py"
+            if run_py.is_file():
+                return str(Path(skill_dir).resolve())
         return None
     
     def __len__(self) -> int:
