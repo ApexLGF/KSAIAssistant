@@ -1,6 +1,7 @@
 """Skill loader for TestAIAgent."""
 
 import json
+import re
 from pathlib import Path
 
 from rich.console import Console
@@ -123,17 +124,37 @@ class SkillLoader:
             parts.append(f"### {skill.name}\n")
             if skill.description:
                 parts.append(f"{skill.description}\n")
-            if skill.working_dir:
-                parts.append(f"\n⚠️ REQUIRED: Every `run_command` call for this skill MUST include `\"working_dir\": \"{skill.working_dir}\"`. Commands will fail without it.\n")
 
             # Add dynamic state if available
             state = self._get_skill_state(skill)
             if state:
                 parts.append(f"\n{state}\n")
 
-            parts.append(f"\n{skill.content}\n")
+            # Rewrite relative script paths to absolute paths so commands
+            # work regardless of working_dir
+            content = skill.content
+            if skill.working_dir:
+                content = self._rewrite_paths(content, skill.working_dir)
+
+            parts.append(f"\n{content}\n")
 
         return "\n".join(parts)
+
+    @staticmethod
+    def _rewrite_paths(content: str, working_dir: str) -> str:
+        """Rewrite relative script paths in skill content to absolute paths.
+
+        Converts patterns like `python scripts/run.py ...` to
+        `python /absolute/path/scripts/run.py ...` so commands work
+        from any working directory.
+        """
+        # Rewrite "python scripts/" to "python /abs/path/scripts/"
+        content = re.sub(
+            r'python\s+scripts/',
+            f'python {working_dir}/scripts/',
+            content,
+        )
+        return content
 
     def get_command_skills(self) -> list[Skill]:
         """Get all command-type skills.
