@@ -1,6 +1,7 @@
 """Tool registry for TestAIAgent."""
 
 import json
+import os
 from typing import TYPE_CHECKING, Any
 
 from agent.tools.base import BaseTool
@@ -84,11 +85,14 @@ class ToolRegistry:
         if isinstance(arguments, str):
             arguments = json.loads(arguments) if arguments else {}
 
-        # Auto-inject working_dir for run_command when missing
-        if name == "run_command" and not arguments.get("working_dir"):
+        # Auto-inject or fix working_dir for run_command
+        if name == "run_command":
             inferred = self._infer_working_dir(arguments.get("command", ""))
             if inferred:
-                arguments["working_dir"] = inferred
+                provided = arguments.get("working_dir")
+                # Inject if missing, or override if the provided path doesn't exist
+                if not provided or not os.path.isdir(provided):
+                    arguments["working_dir"] = inferred
 
         return await tool.execute(**arguments)
 
