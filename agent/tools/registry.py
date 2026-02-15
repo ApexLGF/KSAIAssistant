@@ -113,6 +113,7 @@ class ToolRegistry:
         if not self._skill_loader:
             return None
         for skill in self._skill_loader.list_skills():
+            print(f"[DEBUG _infer] skill={skill.name}, working_dir={skill.working_dir}")
             if skill.working_dir and "scripts/run.py" in command:
                 return skill.working_dir
         return None
