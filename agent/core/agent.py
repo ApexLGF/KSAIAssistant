@@ -37,10 +37,10 @@ Your primary role is to help customers with:
 CRITICAL: To answer customer questions, you MUST use the NotebookLM skill by running commands via run_command tool.
 The NotebookLM skill IS available and working. DO NOT check if it's available - just use it directly.
 
-To query information, use this exact pattern:
+To query information, use this EXACT pattern:
 - Tool: run_command
 - command: python scripts/run.py ask_question.py --question "your question here"
-- working_dir: (use the working directory specified in the NotebookLM skill section below)
+- working_dir: {notebooklm_working_dir}
 
 STRICT RULES:
 - ALWAYS query NotebookLM FIRST before answering ANY customer question about the company, products, policies, or services
@@ -108,6 +108,12 @@ IMPORTANT: When responding to customers:
 
         # Build system prompt
         system_prompt = self.DEFAULT_SYSTEM_PROMPT
+
+        # Resolve notebooklm working directory
+        notebooklm_skill = self.skill_loader.get_skill("notebooklm")
+        notebooklm_dir = notebooklm_skill.working_dir if notebooklm_skill else "./skills/notebooklm-skill"
+        system_prompt = system_prompt.replace("{notebooklm_working_dir}", notebooklm_dir)
+
         knowledge = self.skill_loader.get_knowledge_prompt()
         if knowledge:
             system_prompt += f"\n\n{knowledge}"
