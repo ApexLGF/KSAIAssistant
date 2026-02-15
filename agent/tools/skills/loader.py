@@ -124,6 +124,8 @@ class SkillLoader:
             parts.append(f"### {skill.name}\n")
             if skill.description:
                 parts.append(f"{skill.description}\n")
+            if skill.working_dir:
+                parts.append(f"\n**This skill is installed and ready at `{skill.working_dir}`.**\n")
 
             # Add dynamic state if available
             state = self._get_skill_state(skill)
@@ -146,12 +148,19 @@ class SkillLoader:
 
         Converts patterns like `python scripts/run.py ...` to
         `python /absolute/path/scripts/run.py ...` so commands work
-        from any working directory.
+        from any working directory. Also replaces default upstream
+        install paths with the actual skill location.
         """
         # Rewrite "python scripts/" to "python /abs/path/scripts/"
         content = re.sub(
             r'python\s+scripts/',
             f'python {working_dir}/scripts/',
+            content,
+        )
+        # Replace upstream default paths (e.g. ~/.claude/skills/notebooklm/)
+        content = re.sub(
+            r'~/.claude/skills/notebooklm/?',
+            f'{working_dir}/',
             content,
         )
         return content
