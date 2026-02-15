@@ -292,15 +292,10 @@ export function useChat() {
     try {
       await fetch('/api/history', { method: 'DELETE' })
       setMessages([])
-      currentMessageRef.current = null
-      setIsLoading(false)
-      // Reconnect to trigger welcome message
-      disconnect()
-      setTimeout(() => connect(), 200)
     } catch (error) {
       setConnectionError('Failed to clear history. Server may be unavailable.')
     }
-  }, [connect, disconnect])
+  }, [])
 
   // Connect on mount, disconnect on unmount
   useEffect(() => {
