@@ -1,0 +1,4 @@
+[submodule "skills/notebooklm-skill"]
+	path = skills/notebooklm-skill
+	url = https://github.com/PleasePrompto/notebooklm-skill
+	branch = master
