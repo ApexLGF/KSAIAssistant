@@ -78,6 +78,8 @@ class ToolRegistry:
         Raises:
             ValueError: If tool not found
         """
+        print(f"[DEBUG registry.execute] name={name}, has_skill_loader={self._skill_loader is not None}")
+
         tool = self.get(name)
         if not tool:
             raise ValueError(f"Tool not found: {name}")
@@ -87,11 +89,13 @@ class ToolRegistry:
 
         # Auto-inject or fix working_dir for run_command
         if name == "run_command":
-            inferred = self._infer_working_dir(arguments.get("command", ""))
+            cmd = arguments.get("command", "")
+            provided_wd = arguments.get("working_dir")
+            inferred = self._infer_working_dir(cmd)
+            print(f"[DEBUG registry.execute] cmd={cmd[:80]}, provided_wd={provided_wd}, inferred={inferred}")
             if inferred:
-                provided = arguments.get("working_dir")
                 # Inject if missing, or override if the provided path doesn't exist
-                if not provided or not os.path.isdir(provided):
+                if not provided_wd or not os.path.isdir(provided_wd):
                     arguments["working_dir"] = inferred
                     print(f"[DEBUG] Auto-injected working_dir: {inferred}")
 
