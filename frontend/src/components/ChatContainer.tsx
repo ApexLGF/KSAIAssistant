@@ -21,12 +21,14 @@ export function ChatContainer() {
             {isConnected ? 'Connected' : 'Disconnected'}
           </span>
         </div>
-        <button
-          onClick={clearHistory}
-          className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
-        >
-          Clear History
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={clearHistory}
+            className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
+          >
+            New Chat
+          </button>
+        </div>
       </header>
 
       {/* Connection Error Banner */}
